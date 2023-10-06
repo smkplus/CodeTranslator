@@ -43,4 +43,8 @@ def process_file():
     return jsonify({'error': 'An internal server error occurred. Please try again later.'}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    # Use the PORT environment variable if provided, or default to 5000
+    port = int(os.environ.get('PORT', 5000))
+
+    # Run the app with the specified host and port
+    app.run(host='0.0.0.0', port=port)
