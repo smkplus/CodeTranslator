@@ -1,8 +1,0 @@
-[build]
-  command = "python server.py"
-  functions = "api/"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200

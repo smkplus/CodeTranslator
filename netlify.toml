@@ -1,0 +1,3 @@
+[build]
+  command = "python app.py"
+  functions = "app.py"
