@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Code Translator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #2b2b2b;
+      color: #e0e0e0;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #66d9ef;
+    }
+
+    .panel-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .panel {
+      flex: 1;
+      padding: 10px;
+      margin: 10px;
+      border: 1px solid #66d9ef;
+      background-color: #272822;
+      border-radius: 5px;
+    }
+
+    .panel textarea {
+      width: calc(100% - 20px);
+      height: 200px;
+      border: 1px solid #66d9ef;
+      border-radius: 5px;
+      padding: 5px;
+      background-color: #1e1f1c;
+      color: #f8f8f2;
+      resize: vertical;
+    }
+
+    label, select {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    select {
+      width: calc(100% - 10px);
+      padding: 5px;
+      border: 1px solid #66d9ef;
+      border-radius: 5px;
+      background-color: #1e1f1c;
+      color: #f8f8f2;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #66d9ef;
+      color: #2b2b2b;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #8be9fd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Convert Code</h1>
+
+  <label for="api-key">Enter your Bard API Key:</label>
+  <input type="text" id="api-key" placeholder="Enter your Bard API Key">
+
+  <label for="input-language">Select Input Language:</label>
+  <select id="input-language">
+    <option value="Unity Engine | C#">Unity Engine | C#</option>
+    <option value="Unreal Engine | C++">Unreal Engine | C++</option>
+    <option value="Godot Engine | GDScript">Godot Engine | GDScript</option>
+    <option value="GameMaker Studio | GML">GameMaker Studio | GML</option>
+    <option value="GDevelop | GDScript">GDevelop | GDScript</option>
+    <option value="Defold | Lua">Defold | Lua</option>
+    <option value="Cocos Creator | JavaScript, C++">Cocos Creator | JavaScript, C++</option>
+    <option value="PlayCanvas | JavaScript">PlayCanvas | JavaScript</option>
+    <option value="BabylonJS | JavaScript">BabylonJS | JavaScript</option>
+    <option value="Flax Engine | TypeScript">Flax Engine | TypeScript</option>
+    <option value="WickedEngine | C++">WickedEngine | C++</option>
+    <option value="O3DE | C++, Python">O3DE | C++, Python</option>
+    <option value="UNIGINE | C++">UNIGINE | C++</option>
+    <option value="Stride Game Engine | C#">Stride Game Engine | C#</option>
+    <option value="Bevy Engine | Rust">Bevy Engine | Rust</option>
+    <option value="Fyrox Engine | Rust">Fyrox Engine | Rust</option>
+    <option value="Heaps/Haxe | Haxe">Heaps/Haxe | Haxe</option>
+  </select>
+
+  <label for="target-language">Select Target Language:</label>
+  <select id="target-language">
+    <option value="Godot Engine | GDScript">Godot Engine | GDScript</option>
+    <option value="Unity Engine | C#">Unity Engine | C#</option>
+    <option value="Unreal Engine | C++">Unreal Engine | C++</option>
+    <option value="GameMaker Studio | GML">GameMaker Studio | GML</option>
+    <option value="GDevelop | GDScript">GDevelop | GDScript</option>
+    <option value="Defold | Lua">Defold | Lua</option>
+    <option value="Cocos Creator | JavaScript, C++">Cocos Creator | JavaScript, C++</option>
+    <option value="PlayCanvas | JavaScript">PlayCanvas | JavaScript</option>
+    <option value="BabylonJS | JavaScript">BabylonJS | JavaScript</option>
+    <option value="Flax Engine | TypeScript">Flax Engine | TypeScript</option>
+    <option value="WickedEngine | C++">WickedEngine | C++</option>
+    <option value="O3DE | C++, Python">O3DE | C++, Python</option>
+    <option value="UNIGINE | C++">UNIGINE | C++</option>
+    <option value="Stride Game Engine | C#">Stride Game Engine | C#</option>
+    <option value="Bevy Engine | Rust">Bevy Engine | Rust</option>
+    <option value="Fyrox Engine | Rust">Fyrox Engine | Rust</option>
+    <option value="Heaps/Haxe | Haxe">Heaps/Haxe | Haxe</option>
+  </select>
+
+  <div class="panel-container">
+    <div class="panel" id="left-panel">
+      <textarea id="cs-code" placeholder="Enter your code"></textarea>
+    </div>
+
+    <div class="panel" id="right-panel">
+      <textarea id="translated-code" readonly placeholder="Translated code"></textarea>
+    </div>
+  </div>
+
+  <button onclick="convertCode()">Convert</button>
+
+  <script>
+    function convertCode() {
+      const csCode = document.getElementById('cs-code').value;
+      const apiKey = document.getElementById('api-key').value;
+      const inputLanguage = document.getElementById('input-language').value;
+      const targetLanguage = document.getElementById('target-language').value;
+
+      const prompt = `${csCode}\nTranslate code from ${inputLanguage} to ${targetLanguage}, preserving logic and functionality while adhering to ${targetLanguage}'s syntax and rules.`;
+
+      fetch('http://localhost:5000/process', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Bard-API-Key': apiKey
+        },
+        body: JSON.stringify({ code: prompt, target_language: targetLanguage, input_language: inputLanguage })
+      })
+      .then(response => response.json())
+      .then(data => {
+        const translatedCode = document.getElementById('translated-code');
+        translatedCode.value = data.result || data.error;
+        console.log('Result:', data.result || data.error);
+      })
+      .catch(error => console.error('Error:', error));
+    }
+  </script>
+</body>
+</html>
